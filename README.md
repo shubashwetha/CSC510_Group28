@@ -2,4 +2,5 @@
 Completed Project 1a1 and added the file <br>
 Completed Project 1b1 and added the file <br>
 Completed Project 1c1 and added the file <br>
-Completed Project 1d1 and added the file
+Completed Project 1d1 and added the file <br>
+Completed Project 1e1 and added the file
