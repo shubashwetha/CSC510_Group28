@@ -1,6 +1,6 @@
 .App {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #ccc4d6; /* Eggshell white */
 }
 
 main {
@@ -10,13 +10,13 @@ main {
 }
 
 .navbar {
-  background-color: #2c3e50;
+  background-color: #6A1B9A; /* Purple */
   color: white;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(106, 27, 154, 0.3);
 }
 
 .navbar h1 {
@@ -38,7 +38,12 @@ main {
 }
 
 .navbar a:hover {
-  background-color: #34495e;
+  background-color: #8E24AA; /* Lighter purple */
+}
+
+.navbar a.active {
+  background-color: #9C27B0; /* Purple */
+  font-weight: bold;
 }
 
 .nearby-orders-container {
@@ -49,31 +54,32 @@ main {
 }
 
 .orders-list {
-  background: white;
+  background: #dfdde1; /* Soft eggshell */
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(106, 27, 154, 0.15);
 }
 
 .orders-list h2 {
   margin-top: 0;
-  color: #2c3e50;
-  border-bottom: 2px solid #3498db;
+  color: #6A1B9A; /* Purple */
+  border-bottom: 2px solid #9C27B0; /* Purple accent */
   padding-bottom: 0.5rem;
 }
 
 .order-card {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #CE93D8; /* Light purple border */
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  background: #fafafa;
+  background: #FFFEF7; /* Soft eggshell */
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .order-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.25);
+  border-color: #9C27B0; /* Purple on hover */
 }
 
 .order-header {
@@ -85,7 +91,7 @@ main {
 
 .order-id {
   font-weight: bold;
-  color: #2c3e50;
+  color: #6A1B9A; /* Purple */
 }
 
 .order-status {
@@ -96,46 +102,51 @@ main {
 }
 
 .status-pending {
-  background-color: #f39c12;
+  background-color: #BA68C8; /* Light purple */
   color: white;
 }
 
 .status-processing {
-  background-color: #3498db;
+  background-color: #9C27B0; /* Purple */
   color: white;
 }
 
 .status-ready {
-  background-color: #27ae60;
+  background-color: #7B1FA2; /* Darker purple */
   color: white;
 }
 
 .status-delivered {
-  background-color: #95a5a6;
+  background-color: #6A1B9A; /* Deep purple */
   color: white;
 }
 
 .order-details {
-  color: #666;
+  color: #737373; /* Slightly darker for readability on eggshell */
   font-size: 0.9rem;
 }
 
+.order-details strong {
+  color: #6A1B9A; /* Purple for emphasis */
+}
+
 .distance {
-  color: #e74c3c;
+  color: #9C27B0; /* Purple */
   font-weight: bold;
 }
 
 .location-controls {
-  background: white;
+  background: #dfdde4; 
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(106, 27, 154, 0.15);
   margin-bottom: 2rem;
+  border: 1px solid #CE93D8; /* Light purple border */
 }
 
 .location-controls h3 {
   margin-top: 0;
-  color: #2c3e50;
+  color: #6A1B9A; /* Purple */
 }
 
 .controls-row {
@@ -147,18 +158,25 @@ main {
 
 .controls-row label {
   font-weight: bold;
-  color: #2c3e50;
+  color: #6A1B9A; /* Purple */
 }
 
 .controls-row input, .controls-row select {
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid #CE93D8; /* Light purple */
   border-radius: 4px;
   font-size: 1rem;
+  background: white;
+}
+
+.controls-row input:focus, .controls-row select:focus {
+  outline: none;
+  border-color: #9C27B0; /* Purple focus */
+  box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.2);
 }
 
 .location-button {
-  background-color: #3498db;
+  background-color: #9C27B0; /* Purple */
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -169,11 +187,11 @@ main {
 }
 
 .location-button:hover {
-  background-color: #2980b9;
+  background-color: #7B1FA2; /* Darker purple */
 }
 
 .location-button:disabled {
-  background-color: #bdc3c7;
+  background-color: #CE93D8; /* Light purple */
   cursor: not-allowed;
 }
 
@@ -181,24 +199,25 @@ main {
   height: 400px;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(106, 27, 154, 0.2);
+  border: 2px solid #CE93D8; /* Light purple border */
 }
 
 .no-orders {
   text-align: center;
-  color: #7f8c8d;
+  color: #9C27B0; /* Purple */
   padding: 2rem;
   font-style: italic;
 }
 
 .loading {
   text-align: center;
-  color: #3498db;
+  color: #9C27B0; /* Purple */
   padding: 2rem;
 }
 
 .error {
-  background-color: #e74c3c;
+  background-color: #D32F2F; /* Deep red-purple */
   color: white;
   padding: 1rem;
   border-radius: 4px;
