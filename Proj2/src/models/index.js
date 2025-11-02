@@ -1,5 +1,6 @@
 export { Order, OrderItem } from './Order'
 export { User } from './User'
+export { Pool, POOL_STATUS } from './Pool'
 
 // Status enums
 export const OrderStatus = {

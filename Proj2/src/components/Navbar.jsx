@@ -20,6 +20,12 @@ const Navbar = () => {
         >
           Nearby Orders
         </Link>
+        <Link 
+          to="/pooling" 
+          className={location.pathname === '/pooling' ? 'active' : ''}
+        >
+          Pooling
+        </Link>
       </div>
     </nav>
   )

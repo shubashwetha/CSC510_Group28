@@ -44,6 +44,20 @@ export const endpoints = {
     logout: () => `${API_BASE}/auth/logout`,
     register: () => `${API_BASE}/auth/register`,
     refresh: () => `${API_BASE}/auth/refresh`
+  },
+
+  // Pools
+  pools: {
+    base: `${API_BASE}/pools`,
+    list: () => `${API_BASE}/pools`,
+    detail: (id) => `${API_BASE}/pools/${id}`,
+    addOrders: (id) => `${API_BASE}/pools/${id}/orders`,
+    removeOrder: (id, orderId) => `${API_BASE}/pools/${id}/orders/${orderId}`,
+    assign: (id) => `${API_BASE}/pools/${id}/assign`,
+    start: (id) => `${API_BASE}/pools/${id}/start`,
+    complete: (id) => `${API_BASE}/pools/${id}/complete`,
+    suggestions: () => `${API_BASE}/pools/suggestions`,
+    optimize: (id) => `${API_BASE}/pools/${id}/optimize`
   }
 }
 
