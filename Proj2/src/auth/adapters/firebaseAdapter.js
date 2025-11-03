@@ -10,13 +10,12 @@ import {
 const app = getApps().length
   ? getApps()[0]
   : initializeApp({
-      apiKey: "AIzaSyAVG3Ad6hE07tP87SYitoA4QPewGcAJyBg",
-      authDomain: "neighborhoodpool-c70d1.firebaseapp.com",
-      projectId: "neighborhoodpool-c70d1",
-      storageBucket: "neighborhoodpool-c70d1.firebasestorage.app",
-      messagingSenderId: "897778788671",
-      appId: "1:897778788671:web:af16dd37efb4ea51e6cb8a",
-      measurementId: "G-EQBSHV0849"
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
     });
 
 const auth = getAuth(app);
