@@ -4,28 +4,33 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import NearbyOrdersPage from "./pages/NearbyOrdersPage";
 import RequireAuth from "./auth/RequireAuth";
+import GlobalAuthGate from "./auth/GlobalAuthGate";
+import { AuthUIProvider } from "./auth/AuthUIContext";
 import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-      <main>
-        <Routes>
-          {/* Public landing page */}
-          <Route path="/" element={<Home />} />
+    <AuthUIProvider>
+      {/* Intercept any click when user is not authed */}
+      <GlobalAuthGate />
 
-          {/* Everything inside this block requires login */}
-          <Route element={<RequireAuth />}>
-            <Route path="/nearby-orders" element={<NearbyOrdersPage />} />
-            
-          </Route>
+      <div className="App">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
 
-          {/* Fallback */}
-          <Route path="*" element={<Home />} />
-        </Routes>
-      </main>
-    </div>
+            {/* Protected routes */}
+            <Route element={<RequireAuth />}>
+              <Route path="/nearby-orders" element={<NearbyOrdersPage />} />
+              {/* add more protected routes here */}
+            </Route>
+
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </main>
+      </div>
+    </AuthUIProvider>
   );
 }
 
