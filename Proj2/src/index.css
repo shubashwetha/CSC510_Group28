@@ -17,3 +17,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Admin page should use full width */
+.admin-page {
+  max-width: 100% !important;
+  width: 100% !important;
+}

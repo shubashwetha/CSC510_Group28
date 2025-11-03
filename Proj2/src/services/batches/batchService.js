@@ -91,6 +91,11 @@ export const batchService = {
       // Optimize route
       const route = optimizeRoute(cluster.orders, driver.currentLocation)
 
+      // Calculate estimated delivery time (assume 30 km/h average speed)
+      const averageSpeedKmPerHour = 30
+      const estimatedHours = cluster.totalDistance / averageSpeedKmPerHour
+      const estimatedDeliveryTime = new Date(Date.now() + estimatedHours * 60 * 60 * 1000)
+
       // Create batch
       const batch = new Batch({
         id: `BATCH-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -100,7 +105,8 @@ export const batchService = {
         status: 'assigned',
         totalDistance: cluster.totalDistance,
         route: route,
-        assignedAt: new Date()
+        assignedAt: new Date(),
+        estimatedDeliveryTime: estimatedDeliveryTime
       })
 
       // Update orders with driver assignment

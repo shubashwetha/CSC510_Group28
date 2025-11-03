@@ -2,6 +2,8 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useAuthUI } from "../auth/AuthUIContext";
+import { useCart } from "../contexts/CartContext";
+import { isAdmin } from "../utils/adminAuth";
 
 const brand = "#681a75";
 const brandHover = "#7B1FA2";
@@ -20,6 +22,8 @@ export default function Navbar() {
   const location = useLocation();
   const { isAuthed, user, logout } = useAuth();
   const { openAuth } = useAuthUI();
+  const { getCartItemCount } = useCart();
+  const cartCount = getCartItemCount();
 
   return (
     <nav className="navbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
@@ -27,11 +31,21 @@ export default function Navbar() {
 
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
         <Link to="/" className={location.pathname === "/" ? "active" : ""}>Home</Link>
+        <Link to="/businesses" className={location.pathname === "/businesses" ? "active" : ""}>
+          Businesses {cartCount > 0 && `(${cartCount})`}
+        </Link>
         {isAuthed && (
           <>
             <Link to="/orders" className={location.pathname === "/orders" ? "active" : ""}>My Orders</Link>
-            <Link to="/admin" className={location.pathname === "/admin" ? "active" : ""}>Admin</Link>
+            {isAdmin(user) && (
+              <Link to="/admin" className={location.pathname === "/admin" ? "active" : ""}>Admin</Link>
+            )}
           </>
+        )}
+        {isAuthed && cartCount > 0 && (
+          <Link to="/checkout" className={location.pathname === "/checkout" ? "active" : ""}>
+            Cart ({cartCount})
+          </Link>
         )}
       </div>
 
