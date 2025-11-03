@@ -1,5 +1,7 @@
 export { Order, OrderItem } from './Order'
 export { User } from './User'
+export { Driver } from './Driver'
+export { Batch } from './Batch'
 export { Pool, POOL_STATUS } from './Pool'
 
 // Status enums

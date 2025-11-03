@@ -2,8 +2,8 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
-import NearbyOrdersPage from './pages/NearbyOrdersPage'
-import PoolingPage from './pages/PoolingPage'
+import OrdersPage from './pages/OrdersPage'
+import AdminPage from './pages/AdminPage'
 import RequireAuth from './auth/RequireAuth'
 import GlobalAuthGate from './auth/GlobalAuthGate'
 import { AuthUIProvider } from './auth/AuthUIContext'
@@ -23,9 +23,8 @@ function App() {
 
             {/* Protected routes */}
             <Route element={<RequireAuth />}>
-              <Route path="/nearby-orders" element={<NearbyOrdersPage />} />
-              <Route path="/pooling" element={<PoolingPage />} />
-              {/* add more protected routes here */}
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Route>
 
             <Route path="*" element={<Home />} />

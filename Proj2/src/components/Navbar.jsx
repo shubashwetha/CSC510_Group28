@@ -27,8 +27,12 @@ export default function Navbar() {
 
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
         <Link to="/" className={location.pathname === "/" ? "active" : ""}>Home</Link>
-        <Link to="/nearby-orders" className={location.pathname === "/nearby-orders" ? "active" : ""}>Nearby Orders</Link>
-        <Link to="/pooling" className={location.pathname === "/pooling" ? "active" : ""}>Pooling</Link>
+        {isAuthed && (
+          <>
+            <Link to="/orders" className={location.pathname === "/orders" ? "active" : ""}>My Orders</Link>
+            <Link to="/admin" className={location.pathname === "/admin" ? "active" : ""}>Admin</Link>
+          </>
+        )}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
