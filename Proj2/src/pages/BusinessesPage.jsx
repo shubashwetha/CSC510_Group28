@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
+import { useToast } from '../contexts/ToastContext'
 import { businessService } from '../services/businesses/businessService'
 import './BusinessesPage.css'
 
@@ -8,11 +10,26 @@ export default function BusinessesPage() {
   const [selectedBusiness, setSelectedBusiness] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [addingToCart, setAddingToCart] = useState({}) // Track which items are being added
   const { addToCart } = useCart()
+  const { showToast } = useToast()
+  const [searchParams] = useSearchParams()
+  const processingRef = useRef(new Set()) // Track items currently being processed
 
   useEffect(() => {
     loadBusinesses()
   }, [])
+
+  useEffect(() => {
+    // Check if businessId is in URL params (from AI chat redirect)
+    const businessId = searchParams.get('businessId')
+    if (businessId && businesses.length > 0) {
+      const business = businesses.find(b => b.id === businessId)
+      if (business) {
+        setSelectedBusiness(business)
+      }
+    }
+  }, [searchParams, businesses])
 
   const loadBusinesses = async () => {
     try {
@@ -28,10 +45,48 @@ export default function BusinessesPage() {
     }
   }
 
-  const handleAddToCart = (menuItem) => {
-    addToCart(selectedBusiness.id, selectedBusiness.name, menuItem, 1)
-    alert(`Added ${menuItem.name} to cart!`)
-  }
+  const handleAddToCart = useCallback((menuItem) => {
+    // Prevent double-clicks and rapid clicks
+    const itemKey = `${selectedBusiness?.id}-${menuItem.id}`
+    
+    if (processingRef.current.has(itemKey)) {
+      return // Already processing this item
+    }
+
+    // Validate inputs
+    if (!selectedBusiness || !selectedBusiness.id || !selectedBusiness.name) {
+      showToast('Error: Business information is missing', 'error')
+      return
+    }
+
+    if (!menuItem || !menuItem.id || !menuItem.name) {
+      showToast('Error: Item information is missing', 'error')
+      return
+    }
+
+    try {
+      // Mark as processing
+      processingRef.current.add(itemKey)
+      setAddingToCart(prev => ({ ...prev, [itemKey]: true }))
+
+      // Add to cart
+      addToCart(selectedBusiness.id, selectedBusiness.name, menuItem, 1)
+      showToast(`Added ${menuItem.name} to cart!`, 'success')
+    } catch (err) {
+      console.error('Error adding to cart:', err)
+      showToast(`Failed to add ${menuItem.name} to cart: ${err.message || 'Unknown error'}`, 'error')
+    } finally {
+      // Remove from processing after a short delay to prevent rapid clicks
+      setTimeout(() => {
+        processingRef.current.delete(itemKey)
+        setAddingToCart(prev => {
+          const next = { ...prev }
+          delete next[itemKey]
+          return next
+        })
+      }, 500) // 500ms debounce
+    }
+  }, [selectedBusiness, addToCart, showToast])
 
   if (loading) {
     return (
@@ -97,9 +152,14 @@ export default function BusinessesPage() {
                   </div>
                   <button 
                     className="add-to-cart-btn"
-                    onClick={() => handleAddToCart(item)}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleAddToCart(item)
+                    }}
+                    disabled={addingToCart[`${selectedBusiness.id}-${item.id}`]}
                   >
-                    Add to Cart
+                    {addingToCart[`${selectedBusiness.id}-${item.id}`] ? 'Adding...' : 'Add to Cart'}
                   </button>
                 </div>
               ))}

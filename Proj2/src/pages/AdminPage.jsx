@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../auth/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet'
 import { batchService } from '../services/batches/batchService'
@@ -17,6 +18,7 @@ L.Icon.Default.mergeOptions({
 
 export default function AdminPage() {
   const { user } = useAuth()
+  const { showToast } = useToast()
   const [batches, setBatches] = useState([])
   const [drivers, setDrivers] = useState([])
   const [orders, setOrders] = useState([])
@@ -24,12 +26,38 @@ export default function AdminPage() {
   const [error, setError] = useState(null)
   const [selectedBatch, setSelectedBatch] = useState(null)
   const [isAssigning, setIsAssigning] = useState(false)
+  const [autoAssignEnabled, setAutoAssignEnabled] = useState(false)
 
   useEffect(() => {
     console.log('AdminPage: Component mounted, user:', user)
     console.log('AdminPage: Loading data...')
     loadData()
   }, [])
+
+  // Auto-assign orders every 5 minutes
+  useEffect(() => {
+    if (!autoAssignEnabled) return
+
+    const interval = setInterval(async () => {
+      try {
+        console.log('AdminPage: Auto-assigning orders...')
+        const newBatches = await batchService.assignOrdersToDrivers({
+          maxOrdersPerBatch: 10,
+          maxDistanceKm: 20
+        })
+        
+        if (newBatches.length > 0) {
+          await loadData() // Refresh data
+          showToast(`Auto-assigned ${newBatches.length} batch(es) to drivers`, 'success')
+        }
+      } catch (err) {
+        console.error('AdminPage: Error in auto-assign:', err)
+        showToast(`Auto-assign error: ${err.message}`, 'error')
+      }
+    }, 5 * 60 * 1000) // 5 minutes
+
+    return () => clearInterval(interval)
+  }, [autoAssignEnabled, showToast])
 
   const loadData = async () => {
     try {
@@ -76,14 +104,14 @@ export default function AdminPage() {
       await loadData() // Refresh data
       
       if (newBatches.length > 0) {
-        alert(`Successfully assigned ${newBatches.length} batch(es) to drivers!`)
+        showToast(`Successfully assigned ${newBatches.length} batch(es) to drivers!`, 'success')
       } else {
-        alert('No batches were created. All orders may already be assigned or no drivers available.')
+        showToast('No batches were created. All orders may already be assigned or no drivers available.', 'info')
       }
     } catch (err) {
       console.error('AdminPage: Error auto-assigning:', err)
       setError(err.message)
-      alert(`Error: ${err.message}`)
+      showToast(`Error: ${err.message}`, 'error')
     } finally {
       setIsAssigning(false)
     }
@@ -193,6 +221,12 @@ export default function AdminPage() {
             className="assign-btn"
           >
             {isAssigning ? 'Assigning...' : 'Auto-Assign Orders to Drivers'}
+          </button>
+          <button 
+            onClick={() => setAutoAssignEnabled(!autoAssignEnabled)}
+            className={autoAssignEnabled ? 'toggle-btn active' : 'toggle-btn'}
+          >
+            {autoAssignEnabled ? '🟢 Auto-Assign On (Every 5 min)' : '⚪ Auto-Assign Off'}
           </button>
           <button onClick={loadData} className="refresh-btn">
             Refresh

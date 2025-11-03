@@ -1,6 +1,7 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import AIChat from './components/AIChat'
 import Home from './pages/Home'
 import BusinessesPage from './pages/BusinessesPage'
 import CheckoutPage from './pages/CheckoutPage'
@@ -20,6 +21,7 @@ function App() {
 
       <div className="App">
         <Navbar />
+        <AIChat />
         <Routes>
           <Route path="/" element={
             <main>

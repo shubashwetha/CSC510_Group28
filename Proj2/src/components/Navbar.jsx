@@ -37,15 +37,13 @@ export default function Navbar() {
         {isAuthed && (
           <>
             <Link to="/orders" className={location.pathname === "/orders" ? "active" : ""}>My Orders</Link>
+            <Link to="/checkout" className={location.pathname === "/checkout" ? "active" : ""}>
+              Cart {cartCount > 0 && `(${cartCount})`}
+            </Link>
             {isAdmin(user) && (
               <Link to="/admin" className={location.pathname === "/admin" ? "active" : ""}>Admin</Link>
             )}
           </>
-        )}
-        {isAuthed && cartCount > 0 && (
-          <Link to="/checkout" className={location.pathname === "/checkout" ? "active" : ""}>
-            Cart ({cartCount})
-          </Link>
         )}
       </div>
 
