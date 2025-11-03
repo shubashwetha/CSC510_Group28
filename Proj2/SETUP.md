@@ -1,153 +1,211 @@
-# Setup Complete! 🎉
+# Setup Guide - NeighborhoodPool
 
-## Your Nearby Orders Board Application is Ready
+Complete setup guide for getting NeighborhoodPool running on your local machine.
 
-### ✅ What Has Been Implemented
+## Prerequisites
 
-1. **Complete React Application Structure**
-   - E-commerce frontend with routing
-   - Nearby orders board with location tracking
-   - Interactive map integration
-   - Product catalog
-   - Shopping cart
+Before you begin, ensure you have the following installed:
 
-2. **Location-Based Services**
-   - GPS tracking with browser geolocation API
-   - Distance calculation using Haversine formula
-   - Real-time location updates
-   - Radius-based filtering
+- **Node.js** 18+ and npm (or yarn)
+- **Git** for version control
+- A modern web browser (Chrome, Firefox, Safari, or Edge)
 
-3. **Order Management**
-   - Create, view, and update orders
-   - Status tracking (Pending, Processing, Ready, Delivered)
-   - Distance-based sorting
-   - Filter by status and radius
+## Quick Start
 
-4. **Testing Infrastructure**
-   - Vitest test runner configured
-   - Component testing setup
-   - Service testing
-   - Distance calculation tests
+### 1. Clone the Repository
 
-## 🚀 How to Run
-
-### Start Development Server
 ```bash
-cd Proj2
+git clone https://github.com/shubashwetha/CSC510_Group28.git
+cd CSC510_Group28/Proj2
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+This will install all required dependencies including:
+- React 18
+- Vite
+- React Router
+- React Leaflet
+- Firebase
+- Vitest
+- And other dependencies
+
+### 3. Start Development Server
+
+```bash
 npm run dev
 ```
 
 The application will be available at: **http://localhost:5173**
 
-### Run Tests
-```bash
-npm test
+### 4. Verify Installation
+
+Open your browser and navigate to `http://localhost:5173`. You should see the NeighborhoodPool home page.
+
+## Development Setup
+
+### Environment Variables
+
+For development, the application uses mock data by default. No environment variables are required.
+
+For production, create a `.env` file in the `Proj2` directory:
+
+```env
+VITE_API_BASE_URL=https://your-api.com
+VITE_USE_MOCK_DATA=false
+VITE_FIREBASE_API_KEY=your-firebase-key
+VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
+VITE_FIREBASE_PROJECT_ID=your-project-id
 ```
 
-### Run Tests with UI
+### Running Tests
+
 ```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with coverage
+npm test -- --coverage
+
+# Run tests with UI
 npm run test:ui
 ```
 
-## 📁 Project Structure
+### Building for Production
+
+```bash
+# Build the application
+npm run build
+
+# Preview the production build
+npm run preview
+```
+
+The build output will be in the `dist` directory.
+
+## Project Structure
 
 ```
 Proj2/
 ├── src/
-│   ├── components/
-│   │   ├── nearbyOrdersBoard.js    # Main board component
-│   │   ├── OrderCard.jsx          # Order display
-│   │   ├── LocationControls.jsx   # Controls
-│   │   └── Navbar.jsx             # Navigation
-│   ├── pages/
-│   │   ├── Home.jsx
-│   │   ├── NearbyOrdersPage.jsx
-│   │   ├── ProductsPage.jsx
-│   │   └── CartPage.jsx
-│   ├── services/
-│   │   ├── locationService.js    # GPS tracking
-│   │   ├── orderService.js       # Order management
-│   │   └── productService.js     # Products
-│   ├── hooks/
-│   │   ├── useNearbyOrders.js    # Nearby orders hook
-│   │   └── useLocation.js        # Location hook
-│   └── utils/
-│       └── distanceCalculator.js # Distance math
-├── Test/
-│   └── features/                 # Test files
-├── vite.config.js                # Vite configuration
-├── vitest.config.js              # Test configuration
-└── package.json
-
+│   ├── components/      # React components
+│   ├── pages/          # Page components
+│   ├── services/       # API and business logic
+│   ├── hooks/          # Custom React hooks
+│   ├── models/         # Data models
+│   ├── utils/          # Utility functions
+│   └── auth/           # Authentication logic
+├── Test/               # Test files
+├── package.json        # Dependencies and scripts
+├── vite.config.js      # Vite configuration
+└── vitest.config.js    # Vitest configuration
 ```
 
-## 🎯 Key Features
+## Key Features
 
 ### Nearby Orders Board
-- Real-time GPS tracking
+- Location-based order discovery
 - Interactive map with Leaflet
-- Distance-based filtering
-- Status-based filtering
-- Order status updates
-- Visual order display
+- Radius and status filtering
 
-### Location Services
-- Browser geolocation API integration
-- Permission handling
-- Real-time location watching
-- Accurate distance calculations
+### Order Pooling
+- Create pools with multiple orders
+- Route optimization
+- Cost savings calculation
 
-### Order Management
-- Create new orders
-- Track order status
-- View delivery locations
-- Filter and search orders
+### Authentication
+- Firebase authentication
+- Role-based access control
+- Multi-user support (Customer, Driver, Business, Admin)
 
-## 🌐 Access the Application
+## Troubleshooting
 
-**Development Server**: http://localhost:5173
+### Port Already in Use
 
-**Pages**:
-- Home: http://localhost:5173/
-- Nearby Orders: http://localhost:5173/nearby-orders
-- Products: http://localhost:5173/products
-- Cart: http://localhost:5173/cart
+If port 5173 is already in use:
 
-## 📝 Next Steps
+```bash
+# Find and kill the process
+lsof -ti:5173 | xargs kill -9
 
-1. **Open the app** in your browser at http://localhost:5173
-2. **Click "Nearby Orders"** in the navigation
-3. **Enable location access** to see the feature in action
-4. **Adjust the radius** slider to filter orders by distance
-5. **Filter by status** using the dropdown
-6. **View orders on the map** for visual tracking
+# Or change the port in vite.config.js
+```
 
-## ⚙️ Configuration
+### Module Not Found Errors
 
-### Vite Config
-The Vite configuration is set up to handle JSX in `.js` files, allowing the `nearbyOrdersBoard.js` to use JSX syntax.
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
 
-### Test Config
-Separate vitest configuration for running tests with proper JSX support.
+### Tests Failing
 
-## 🛠️ Troubleshooting
+```bash
+# Run with verbose output
+npm test -- --reporter=verbose
 
-If you encounter any issues:
+# Clear cache and reinstall
+rm -rf node_modules
+npm install
+```
 
-1. **Port already in use**: Change port in vite.config.js
-2. **Tests failing**: Run `npm install` to ensure dependencies are installed
-3. **Location not working**: Check browser permissions in settings
+### Firebase Authentication Issues
 
-## 📦 Dependencies Installed
+- Ensure Firebase configuration is correct
+- Check that Firebase project is set up properly
+- Verify API keys in environment variables
 
-- React 18.2.0
-- React Router DOM 6.8.0
-- React Leaflet 4.2.1
-- Leaflet 1.9.3
-- Vitest 0.28.0
-- React Testing Library
-- Vite 4.1.0
+### Map Not Loading
+
+- Check that Leaflet CSS is imported
+- Verify OpenWeather API key (if using real API)
+- Check browser console for errors
+
+## Development Workflow
+
+1. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes** and test locally
+
+3. **Run tests** to ensure nothing is broken:
+   ```bash
+   npm test
+   ```
+
+4. **Commit your changes**:
+   ```bash
+   git add .
+   git commit -m "feat: Add your feature"
+   ```
+
+5. **Push and create a pull request**
+
+## Next Steps
+
+- Read [ARCHITECTURE.md](./ARCHITECTURE.md) for system architecture
+- See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines
+- Check [README.md](./README.md) for project overview
+
+## Support
+
+If you encounter issues:
+- Check the [Troubleshooting](#troubleshooting) section above
+- Review [INSTALL.md](./INSTALL.md) for installation details
+- Open an issue on GitHub
+- Contact the development team
 
 ---
 
-**Your nearby orders board application is complete and ready to use!** 🎉
+**Happy Coding!** 🚀
+
