@@ -22,6 +22,19 @@ export function clusterOrders(orders, drivers, maxOrdersPerBatch = 10, maxDistan
   
   if (availableDrivers.length === 0) return []
 
+  // Group orders by location (zip code) first to batch same-location orders together
+  const ordersByLocation = {}
+  orders.forEach(order => {
+    const orderLocation = order.location || order.deliveryLocation
+    if (!orderLocation || !orderLocation.zipCode) return
+    
+    const locationKey = orderLocation.zipCode
+    if (!ordersByLocation[locationKey]) {
+      ordersByLocation[locationKey] = []
+    }
+    ordersByLocation[locationKey].push(order)
+  })
+
   // Create batches for each driver
   const batches = []
   const unassignedOrders = [...orders]
@@ -30,8 +43,43 @@ export function clusterOrders(orders, drivers, maxOrdersPerBatch = 10, maxDistan
   for (const driver of availableDrivers) {
     const driverOrders = []
 
-    // Find orders that match driver's zip codes and are within distance
-    for (let i = unassignedOrders.length - 1; i >= 0; i--) {
+    // Prioritize orders from same locations (batch them together)
+    // First, try to fill batch with orders from same zip codes
+    for (const [zipCode, locationOrders] of Object.entries(ordersByLocation)) {
+      if (!driver.servesZipCode(zipCode)) continue
+      if (driverOrders.length >= maxOrdersPerBatch) break
+
+      // Take orders from this location up to batch limit
+      for (let i = locationOrders.length - 1; i >= 0 && driverOrders.length < maxOrdersPerBatch; i--) {
+        const order = locationOrders[i]
+        const orderIndex = unassignedOrders.findIndex(o => o.id === order.id)
+        if (orderIndex === -1) continue // Already assigned
+
+        const orderLocation = order.location || order.deliveryLocation
+        if (!orderLocation || !orderLocation.lat || !orderLocation.lng) continue
+
+        // Calculate distance from driver to order
+        const distance = distanceCalculator.calculateDistance(
+          driver.currentLocation.lat,
+          driver.currentLocation.lng,
+          orderLocation.lat,
+          orderLocation.lng
+        )
+
+        // Check if within max distance
+        if (distance <= maxDistanceKm) {
+          driverOrders.push({
+            order,
+            distance
+          })
+          unassignedOrders.splice(orderIndex, 1) // Remove from unassigned
+          locationOrders.splice(i, 1) // Remove from location group
+        }
+      }
+    }
+
+    // Then fill remaining slots with nearby orders from different locations
+    for (let i = unassignedOrders.length - 1; i >= 0 && driverOrders.length < maxOrdersPerBatch; i--) {
       const order = unassignedOrders[i]
       
       // Get order location (handle both location and deliveryLocation)
@@ -52,7 +100,7 @@ export function clusterOrders(orders, drivers, maxOrdersPerBatch = 10, maxDistan
       )
 
       // Check if within max distance
-      if (distance <= maxDistanceKm && driverOrders.length < maxOrdersPerBatch) {
+      if (distance <= maxDistanceKm) {
         driverOrders.push({
           order,
           distance
