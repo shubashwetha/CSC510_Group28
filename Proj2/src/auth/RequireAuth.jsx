@@ -7,6 +7,6 @@ export default function RequireAuth({ children }) {
 
   if (isAuthed) return children ? children : <Outlet />;
 
-  // Not authed → bounce to Home and remember where they tried to go
+  // Not authed? Then bounce to Home and remember where they tried to go
   return <Navigate to="/" state={{ from: location }} replace />;
 }

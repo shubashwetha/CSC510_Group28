@@ -70,7 +70,6 @@ export default function LoginForm({ onDone }) {
 
       <button type="submit" style={primary}>Continue</button>
 
-      {/* Google button (no divider) */}
       <button type="button" style={secondary} onClick={google} aria-label="Continue with Google">
         Continue with Google
       </button>
