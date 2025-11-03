@@ -6,7 +6,7 @@ Complete setup guide for getting NeighborhoodPool running on your local machine.
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** 18+ and npm (or yarn)
+- **Node.js** 18+ and npm
 - **Git** for version control
 - A modern web browser (Chrome, Firefox, Safari, or Edge)
 
@@ -24,15 +24,6 @@ cd CSC510_Group28/Proj2
 ```bash
 npm install
 ```
-
-This will install all required dependencies including:
-- React 18
-- Vite
-- React Router
-- React Leaflet
-- Firebase
-- Vitest
-- And other dependencies
 
 ### 3. Start Development Server
 
@@ -90,24 +81,6 @@ npm run preview
 
 The build output will be in the `dist` directory.
 
-## Project Structure
-
-```
-Proj2/
-├── src/
-│   ├── components/      # React components
-│   ├── pages/          # Page components
-│   ├── services/       # API and business logic
-│   ├── hooks/          # Custom React hooks
-│   ├── models/         # Data models
-│   ├── utils/          # Utility functions
-│   └── auth/           # Authentication logic
-├── Test/               # Test files
-├── package.json        # Dependencies and scripts
-├── vite.config.js      # Vite configuration
-└── vitest.config.js    # Vitest configuration
-```
-
 ## Key Features
 
 ### Nearby Orders Board
@@ -119,6 +92,11 @@ Proj2/
 - Create pools with multiple orders
 - Route optimization
 - Cost savings calculation
+
+### Admin Dashboard
+- Automated order-to-driver assignment
+- Batch management
+- Driver assignment
 
 ### Authentication
 - Firebase authentication
@@ -134,8 +112,6 @@ If port 5173 is already in use:
 ```bash
 # Find and kill the process
 lsof -ti:5173 | xargs kill -9
-
-# Or change the port in vite.config.js
 ```
 
 ### Module Not Found Errors
@@ -151,10 +127,6 @@ npm install
 ```bash
 # Run with verbose output
 npm test -- --reporter=verbose
-
-# Clear cache and reinstall
-rm -rf node_modules
-npm install
 ```
 
 ### Firebase Authentication Issues
@@ -169,43 +141,11 @@ npm install
 - Verify OpenWeather API key (if using real API)
 - Check browser console for errors
 
-## Development Workflow
-
-1. **Create a feature branch**:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make your changes** and test locally
-
-3. **Run tests** to ensure nothing is broken:
-   ```bash
-   npm test
-   ```
-
-4. **Commit your changes**:
-   ```bash
-   git add .
-   git commit -m "feat: Add your feature"
-   ```
-
-5. **Push and create a pull request**
-
-## Next Steps
-
-- Read [ARCHITECTURE.md](./ARCHITECTURE.md) for system architecture
-- See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines
-- Check [README.md](./README.md) for project overview
-
 ## Support
 
 If you encounter issues:
 - Check the [Troubleshooting](#troubleshooting) section above
 - Review [INSTALL.md](./INSTALL.md) for installation details
-- Open an issue on GitHub
-- Contact the development team
+- See [README.md](./README.md) for project overview
 
 ---
-
-**Happy Coding!** 🚀
-

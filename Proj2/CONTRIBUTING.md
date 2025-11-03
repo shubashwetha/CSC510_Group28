@@ -87,7 +87,6 @@ Test/              # Test files
 - Prefer named exports for components
 - Use async/await for asynchronous operations
 - Handle errors appropriately
-- Use TypeScript-style JSDoc comments
 
 ### File Organization
 
@@ -102,24 +101,6 @@ Test/              # Test files
 - Follow Arrange-Act-Assert pattern
 - Mock external dependencies
 - Test edge cases and error conditions
-
-## Areas for Contribution
-
-### High Priority
-
-- Additional test coverage
-- Documentation improvements
-- Performance optimizations
-- Accessibility improvements
-- Error handling enhancements
-
-### Feature Ideas
-
-- Real-time order updates
-- Advanced filtering options
-- Mobile responsive improvements
-- Analytics dashboard
-- Payment integration
 
 ## Reporting Issues
 
@@ -143,4 +124,3 @@ When reporting issues, please include:
 By contributing, you agree that your contributions will be licensed under the ISC License.
 
 Thank you for contributing to NeighborhoodPool! 🎉
-

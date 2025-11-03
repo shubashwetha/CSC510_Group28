@@ -9,7 +9,7 @@
 
 ```bash
 # Clone repository
-git clone <repository-url>
+git clone https://github.com/shubashwetha/CSC510_Group28.git
 cd CSC510_Group28/Proj2
 
 # Install dependencies
@@ -59,6 +59,7 @@ All dependencies are listed in `package.json`:
 - Vitest
 - React Router
 - React Leaflet
+- Firebase
 - Axios
 
 ## Troubleshooting
@@ -82,5 +83,4 @@ npm test -- --reporter=verbose
 
 ## Support
 
-See README.md for more information.
-
+See [README.md](./README.md) for more information.

@@ -2,19 +2,17 @@
 
 ## System Overview
 
-NeighborhoodPool is a location-based order management system built with React and designed for scalability. The architecture follows a modular, service-oriented approach with clear separation of concerns.
+NeighborhoodPool is a location-based order management system built with React and designed for scalability. The architecture follows a service-oriented approach with separation of concerns.
 
 ## Architecture Principles
 
 ### Modularity
 - Each feature is self-contained in its own module
-- Services are separated by domain (orders, users, locations, pooling)
+- Services are separated by domain (orders, users, locations, pooling, batches, drivers)
 - Components are reusable and composable
 
 ### Scalability
 - API abstraction layer allows easy switching between mock and real APIs
-- State management is centralized and extensible
-- Service layer can be extended without affecting UI
 
 ### Testability
 - Business logic separated from UI components
@@ -58,18 +56,23 @@ NeighborhoodPool is a location-based order management system built with React an
 - Form validation
 
 **Key Components**:
-- `NearbyOrdersBoard.jsx` - Main nearby orders feature
+- `nearbyOrdersBoard.jsx` - Main nearby orders feature
 - `OrderCard.jsx` - Order display component
 - `LocationControls.jsx` - Location input and filters
 - `PoolingDashboard.jsx` - Order pooling interface
 - `Navbar.jsx` - Navigation component
+- `AIChat.jsx` - AI chat assistant for business discovery
 
 **Pages**:
 - `Home.jsx` - Landing page
-- `NearbyOrdersPage.jsx` - Nearby orders view
-- `PoolingPage.jsx` - Order pooling view
+- `BusinessesPage.jsx` - Business browsing and menu
+- `CheckoutPage.jsx` - Shopping cart checkout
 - `OrdersPage.jsx` - User orders view
-- `AdminPage.jsx` - Admin dashboard
+- `AdminPage.jsx` - Admin dashboard with batch assignment
+- `NearbyOrdersPage.jsx` - Nearby orders view (standalone page)
+- `PoolingPage.jsx` - Order pooling view (standalone page)
+
+**Note**: `NearbyOrdersPage` and `PoolingPage` exist as standalone pages but are not currently routed in `App.jsx`. They can be accessed directly or integrated into the main navigation.
 
 ### 2. Business Logic Layer
 
@@ -83,7 +86,12 @@ NeighborhoodPool is a location-based order management system built with React an
 
 **Services**:
 - `orders/orderService.js` - Order CRUD operations
-- `pooling/poolingService.js` - Pool management
+- `pooling/poolingService.js` - Pool management (user-created pools)
+- `batches/batchService.js` - Batch management (admin driver assignment)
+- `clustering/orderClustering.js` - Order clustering algorithm for batch assignment
+- `drivers/driverService.js` - Driver management
+- `businesses/businessService.js` - Business and menu management
+- `productService.js` - Product catalog (legacy/e-commerce feature)
 - `locationService.js` - Location and geocoding
 - `api/client.js` - HTTP client wrapper
 - `api/endpoints.js` - API endpoint definitions
@@ -105,9 +113,9 @@ NeighborhoodPool is a location-based order management system built with React an
 **Models**:
 - `Order.js` - Order data model with validation
 - `User.js` - User data model with role support
-- `Pool.js` - Pool data model
+- `Pool.js` - Pool data model (user-created order groups)
+- `Batch.js` - Batch data model (admin-assigned order groups)
 - `Driver.js` - Driver data model
-- `Batch.js` - Batch data model
 
 ### 4. Utilities Layer
 
@@ -136,9 +144,36 @@ NeighborhoodPool is a location-based order management system built with React an
 
 **Components**:
 - `AuthContext.jsx` - Authentication context
+- `AuthUIContext.jsx` - Auth UI state management
 - `RequireAuth.jsx` - Protected route wrapper
 - `RequireAdmin.jsx` - Admin-only route wrapper
 - `GlobalAuthGate.jsx` - Global auth interceptor
+- `adapters/firebaseAdapter.js` - Firebase authentication adapter
+
+### 6. Context Layer
+
+**Location**: `src/contexts/`
+
+**Responsibilities**:
+- Global state management
+- Cross-component state sharing
+
+**Contexts**:
+- `CartContext.jsx` - Shopping cart state management
+- `ToastContext.jsx` - Toast notification system
+
+## Application Routes
+
+**Current Routes** (defined in `App.jsx`):
+- `/` - Home page
+- `/businesses` - Business browsing
+- `/checkout` - Shopping cart checkout (protected)
+- `/orders` - User orders view (protected)
+- `/admin` - Admin dashboard (admin-only)
+
+**Unrouted Pages** (exist but not in main navigation):
+- `/nearby-orders` - NearbyOrdersPage (can be added to routes)
+- `/pooling` - PoolingPage (can be added to routes)
 
 ## Data Flow
 
@@ -178,6 +213,24 @@ Cost Calculation
 UI Update (Pool Display)
 ```
 
+### Batch Assignment Flow (Admin)
+
+```
+Admin Clicks Auto-Assign
+    ↓
+batchService.assignOrdersToDrivers()
+    ↓
+orderClustering.clusterOrders()
+    ↓
+driverService.getAllDrivers()
+    ↓
+orderService.getAllOrders()
+    ↓
+Batch Model (validation)
+    ↓
+UI Update (Admin Dashboard)
+```
+
 ## Technology Stack
 
 ### Frontend
@@ -187,14 +240,13 @@ UI Update (Pool Display)
 - **React Leaflet** - Map integration
 
 ### State Management
-- **React Context API** - Global state (auth, cart)
+- **React Context API** - Global state (auth, cart, toast)
 - **Custom Hooks** - Local state management
-- **Future**: Redux or Zustand for complex state
 
 ### Backend Integration
 - **Firebase** - Authentication
-- **Axios** - HTTP client
-- **OpenWeather API** - Geocoding
+- **Axios** - HTTP client (via API client)
+- **OpenWeather API** - Geocoding (via locationService)
 - **Future**: RESTful API backend
 
 ### Testing
@@ -205,18 +257,18 @@ UI Update (Pool Display)
 ## Design Patterns
 
 ### Service Pattern
-All business logic is encapsulated in service classes:
+All business logic is encapsulated in service objects:
 ```javascript
 // Example: orderService.js
 export const orderService = {
-  getAll: async () => { ... },
-  getById: async (id) => { ... },
-  create: async (data) => { ... },
-  update: async (id, data) => { ... }
+  getAllOrders: async () => { ... },
+  getOrderById: async (id) => { ... },
+  createOrder: async (data) => { ... },
+  updateOrder: async (id, data) => { ... }
 }
 ```
 
-### Repository Pattern (via API Client)
+### Repository Pattern 
 API abstraction allows switching between mock and real data:
 ```javascript
 // api/client.js
@@ -248,45 +300,35 @@ export function useNearbyOrders(location, radius, status) {
 }
 ```
 
-## Scalability Considerations
+## Key Features
 
-### Adding New Features
+### 1. Nearby Orders Board
+- Location-based order discovery
+- Interactive map with Leaflet
+- Radius and status filtering
+- Real-time order updates
 
-1. **Create Model** (if needed):
-   ```javascript
-   // src/models/NewFeature.js
-   export class NewFeature { ... }
-   ```
+### 2. Order Pooling
+- User-created order pools
+- Route optimization
+- Cost savings calculation
+- Pool suggestions
 
-2. **Create Service**:
-   ```javascript
-   // src/services/newFeature/newFeatureService.js
-   export const newFeatureService = { ... }
-   ```
+### 3. Batch Assignment (Admin)
+- Automated order-to-driver assignment
+- Order clustering algorithm
+- Route optimization
+- Driver management
 
-3. **Create Hook** (if needed):
-   ```javascript
-   // src/hooks/useNewFeature.js
-   export function useNewFeature() { ... }
-   ```
+### 4. Business Browsing
+- Business catalog
+- Menu browsing
+- Shopping cart functionality
 
-4. **Create Component**:
-   ```javascript
-   // src/components/NewFeatureComponent.jsx
-   export function NewFeatureComponent() { ... }
-   ```
-
-### Adding Real Backend
-
-1. Update `.env`:
-   ```env
-   VITE_API_BASE_URL=https://api.neighborhoodpool.com
-   VITE_USE_MOCK_DATA=false
-   ```
-
-2. The API client automatically switches to real API
-
-3. No component changes needed!
+### 5. Authentication & Authorization
+- Firebase authentication
+- Role-based access control (Customer, Driver, Business, Admin)
+- Protected routes
 
 ## API Structure
 
@@ -294,21 +336,22 @@ export function useNearbyOrders(location, radius, status) {
 ```
 src/services/
 ├── orders/
-│   └── mockData.js      # Mock order data
+│   ├── orderService.js
+│   └── mockData.js
+├── batches/
+│   └── batchService.js
+├── pooling/
+│   └── poolingService.js
+├── drivers/
+│   └── driverService.js
+├── businesses/
+│   └── businessService.js
+├── clustering/
+│   └── orderClustering.js
+├── locationService.js
 └── api/
-    └── client.js        # Mock API client
-```
-
-### Future (Real API)
-```
-Backend API:
-GET    /api/orders
-GET    /api/orders/:id
-POST   /api/orders
-PUT    /api/orders/:id
-DELETE /api/orders/:id
-GET    /api/orders/nearby
-...
+    ├── client.js
+    └── endpoints.js
 ```
 
 ## Testing Architecture
@@ -334,28 +377,21 @@ Test/
 ## Future Enhancements
 
 ### Planned Architecture Improvements
-1. **State Management**: Add Redux or Zustand for complex state
+1. **State Management**: Add Redux 
 2. **Real-time Updates**: WebSocket integration for live updates
-3. **Caching Layer**: Add service worker or Redux persist
+3. **Caching Layer**: Add service worker or Redux 
 4. **Microservices**: Split into separate services when scaling
 5. **API Gateway**: Centralized API management
-6. **CDN Integration**: Static asset delivery optimization
 
 ## Security Considerations
 
 - **Authentication**: Firebase Auth with role-based access
-- **Authorization**: Route guards and component-level checks
 - **Data Validation**: Model-level validation before API calls
 - **API Security**: Future: JWT tokens, rate limiting
-- **XSS Prevention**: React's built-in XSS protection
 
 ## Performance Optimization
 
-- **Code Splitting**: Lazy loading for routes
 - **Memoization**: React.memo for expensive components
-- **Virtualization**: For large lists (future)
-- **Image Optimization**: Future CDN integration
-- **Bundle Analysis**: Regular bundle size monitoring
 
 ## Documentation
 
@@ -364,9 +400,9 @@ Test/
 - **INSTALL.md** - Installation guide
 - **CONTRIBUTING.md** - Contribution guidelines
 - **CHANGELOG.md** - Release history
+- **ARCHITECTURE.md** - This file
 
 ---
 
 **Last Updated**: 2025-01-XX  
 **Version**: 1.0.0
-
